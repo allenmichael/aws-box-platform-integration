@@ -14,18 +14,17 @@
  * limitations under the License.
 **/
 "use strict";
-var AWS = require('aws-sdk');
-var _ = require('lodash');
 
-var checkCognito = require('./checkCognito');
-var checkDb = require('./checkDb');
-var updateDb = require('./updateDb');
-var createAppUser = require('./createAppUser');
+let checkCognito = require('./checkCognito');
+let checkDb = require('./checkDb');
+let updateDb = require('./updateDb');
+let createAppUser = require('./createAppUser');
+let AWS = require('./aws-service');
 
 exports.handler = function (event, context) {
-  AWS.config.loadFromPath('./aws-config.json');
-  var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
-  var dynamodb = new AWS.DynamoDB();
+
+  var cognitoidentityserviceprovider = AWS.getCognitoClient();
+  var dynamodb = AWS.getDynamoClient();
   var foundSub;
   var params = {
     UserPoolId: event.userPoolId,

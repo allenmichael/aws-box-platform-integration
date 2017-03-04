@@ -1,4 +1,5 @@
-var getSubProp = require('./getSubProp');
+'use strict';
+let getSubProp = require('./getSubProp');
 module.exports = function (cognitoidentityserviceprovider, params) {
   return cognitoidentityserviceprovider.adminGetUser(params).promise()
     .then(function (cognitoResponse) {

@@ -1,4 +1,5 @@
-var _ = require('lodash');
+'use strict';
+const _ = require('lodash');
 module.exports = function (attributes) {
   var sub = _.find(attributes, function (attr) {
     return attr.Name === "sub";

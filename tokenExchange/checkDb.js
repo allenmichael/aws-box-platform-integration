@@ -7,7 +7,7 @@ module.exports = function (dynamodb, sub) {
       return (
         dbResponse && 
         dbResponse.Item && 
-        dbResponse.Item[process.env.DYNAMO_TABLE_NAME] && 
-        dbResponse.Item[process.env.DYNAMO_TABLE_NAME].S) ? dbResponse.Item[process.env.DYNAMO_TABLE_NAME].S : null;
+        dbResponse.Item[process.env.DYNAMO_BOX_APP_USER_ID_KEY] && 
+        dbResponse.Item[process.env.DYNAMO_BOX_APP_USER_ID_KEY].S) ? dbResponse.Item[process.env.DYNAMO_BOX_APP_USER_ID_KEY].S : null;
     });
 }

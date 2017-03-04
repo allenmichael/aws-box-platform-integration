@@ -4,6 +4,27 @@ Description: AWS SAM template for automatically adding Box App User IDs to Cogni
 Resources:
   AWSTemplateFormatVersion: "2010-09-09"
 Resources: 
+  CreateAppUserOnCognitoLoginLambda:
+    Type: AWS::Serverless::Function
+      Properties: 
+        Handler: index.handler
+        Runtime: nodejs4.3
+        CodeUri: s3://<bucket>/createAppUser.zip
+        Policies: AmazonDynamoDBFullAccess
+        Environment:
+          Variables:
+            BOX_CLIENT_ID: ''
+            BOX_CLIENT_SECRET: ''
+            BOX_ENTERPRISE_ID: ''
+            BOX_PUBLIC_KEY_ID: ''
+            BOX_PRIVATE_KEY_FILENAME: ''
+            BOX_PRIVATE_KEY_PASSWORD: ''
+            DYNAMO_BOX_APP_USER_ID_KEY: 'BoxAppUserId'
+            DYNAMO_COGNITO_USERNAME_KEY: 'Username'
+            DYNAMO_PARTITION_KEY: 'UserSubId'
+            DYNAMO_SORT_KEY: 'UserPoolId'
+            DYNAMO_TABLE_NAME: 'CognitoBoxAppUsersMap',
+            COGNITO_USER_POOL_ID: ''
   CognitoBoxAppUsersMap: 
     Type: "AWS::DynamoDB::Table"
     Properties: 
@@ -25,6 +46,7 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
+
   TokenExchangeApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -36,7 +58,7 @@ Resources:
   TokenExchangeLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://<bucket>/api_swagger_cors.zip
+      CodeUri: s3://<bucket>/tokenExchange.zip
       Handler: index.handler
       Runtime: nodejs4.3
       Events:
@@ -60,7 +82,8 @@ Resources:
           BOX_PUBLIC_KEY_ID: ''
           BOX_PRIVATE_KEY_FILENAME: ''
           BOX_PRIVATE_KEY_PASSWORD: ''
-          DYNAMO_KEY_BOX_APP_USER_ID: 'BoxAppUserId'
+          DYNAMO_BOX_APP_USER_ID_KEY: 'BoxAppUserId'
+          DYNAMO_COGNITO_USERNAME_KEY: 'Username'
           DYNAMO_PARTITION_KEY: 'UserSubId'
           DYNAMO_SORT_KEY: 'UserPoolId'
           DYNAMO_TABLE_NAME: 'CognitoBoxAppUsersMap',

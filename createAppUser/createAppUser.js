@@ -1,12 +1,16 @@
-var Box = require('box-node-sdk');
-var BoxConfig = require('./config').BoxConfig;
-var BoxSdk = new Box({
-  clientID: BoxConfig.clientId,
-  clientSecret: BoxConfig.clientSecret,
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const Box = require('box-node-sdk');
+let BoxSdk = new Box({
+  clientID: process.env.BOX_CLIENT_ID,
+  clientSecret: process.env.BOX_CLIENT_SECRET,
   appAuth: {
-    keyID: BoxConfig.jwtPublicKeyId,
-    privateKey: BoxConfig.jwtPrivateKey(),
-    passphrase: BoxConfig.jwtPrivateKeyPassword
+    keyID: process.env.BOX_PUBLIC_KEY_ID,
+    privateKey: (() => {
+      return fs.readFileSync(path.resolve(process.env.BOX_PRIVATE_KEY_FILENAME));
+    })(),
+    passphrase: process.env.BOX_PRIVATE_KEY_PASSWORD
   }
 });
 module.exports = function (userName) {
@@ -16,7 +20,7 @@ module.exports = function (userName) {
       is_platform_access_only: true
     }
   };
-  var BoxAdminClient = BoxSdk.getAppAuthClient(BoxConfig.enterprise, BoxConfig.enterpriseId);
+  let BoxAdminClient = BoxSdk.getAppAuthClient(BoxConfig.enterprise, BoxConfig.enterpriseId);
   return new Promise(function (resolve, reject) {
     BoxAdminClient.post('/users', requestParams, BoxAdminClient.defaultResponseHandler(function (err, boxResponse) {
       if (err) { reject(err) }
