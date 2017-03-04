@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM template for automatically adding Box App User IDs to Cognito users and setting up a client side accessible token exchange between Cognito tokens and Box AppUser tokens.
+Resources:
+  AWSTemplateFormatVersion: "2010-09-09"
+Resources: 
+  CognitoBoxAppUsersMap: 
+    Type: "AWS::DynamoDB::Table"
+    Properties: 
+      TableName: "CognitoBoxAppUsersMap"
+      AttributeDefinitions: 
+        - 
+          AttributeName: "BoxAppUserId"
+          AttributeType: "S"
+        - 
+          AttributeName: "Username"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "UserSubId"
+          KeyType: "HASH"
+        - 
+          AttributeName: "UserPoolId"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+  TokenExchangeApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      DefinitionUri: s3://<bucket>/swagger.yaml
+      StageName: Prod
+      Variables:
+        LambdaFunctionName: !Ref LambdaFunction
+
+  TokenExchangeLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://<bucket>/api_swagger_cors.zip
+      Handler: index.handler
+      Runtime: nodejs4.3
+      Events:
+        ProxyApiRoot:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /
+            Method: ANY
+        ProxyApiGreedy:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: ANY
+      Environment:
+        Variables:
+          BOX_CLIENT_ID: ''
+          BOX_CLIENT_SECRET: ''
+          BOX_ENTERPRISE_ID: ''
+          BOX_PUBLIC_KEY_ID: ''
+          BOX_PRIVATE_KEY_FILENAME: ''
+          BOX_PRIVATE_KEY_PASSWORD: ''
+          DYNAMO_KEY_BOX_APP_USER_ID: 'BoxAppUserId'
+          DYNAMO_PARTITION_KEY: 'UserSubId'
+          DYNAMO_SORT_KEY: 'UserPoolId'
+          DYNAMO_TABLE_NAME: 'CognitoBoxAppUsersMap',
+          COGNITO_USER_POOL_ID: ''
+
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref ApiGatewayApi
+        - '.execute-api.'
+        - !Ref 'AWS::Region'
+        - '.amazonaws.com/Prod'

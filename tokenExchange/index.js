@@ -14,7 +14,7 @@
  * limitations under the License.
 **/
 "use strict"
-var AWS = require('aws-sdk');
+var AWS = require('./aws-service');
 var getSubProp = require('./getSubProp');
 var checkDb = require('./checkDb');
 var generateUserToken = require('./generateUserToken');
@@ -25,9 +25,9 @@ exports.handler = function (event, context, callback) {
     if (!token) {
       callback(null, { body: JSON.stringify({ "message": "No token found.", statusCode: '401' }) });
     }
-    AWS.config.loadFromPath('./aws-config.json');
-    var cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
-    var dynamodb = new AWS.DynamoDB();
+    
+    var cognitoidentityserviceprovider = AWS.getCognitoClient();
+    var dynamodb = AWS.getDynamoClient();
     var foundSub;
     var params = {
       AccessToken: token
