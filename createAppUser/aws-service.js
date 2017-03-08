@@ -14,10 +14,6 @@ class AWSService {
     getCognitoClient() {
         return new this.AWS.CognitoIdentityServiceProvider();
     }
-
-    getDynamoClient() {
-        return new this.AWS.DynamoDB();
-    }
 }
 
 module.exports = new AWSService;

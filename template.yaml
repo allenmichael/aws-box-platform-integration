@@ -19,33 +19,8 @@ Resources:
             BOX_PUBLIC_KEY_ID: ''
             BOX_PRIVATE_KEY_FILENAME: ''
             BOX_PRIVATE_KEY_PASSWORD: ''
-            DYNAMO_BOX_APP_USER_ID_KEY: 'BoxAppUserId'
-            DYNAMO_COGNITO_USERNAME_KEY: 'Username'
-            DYNAMO_PARTITION_KEY: 'UserSubId'
-            DYNAMO_SORT_KEY: 'UserPoolId'
-            DYNAMO_TABLE_NAME: 'CognitoBoxAppUsersMap',
+            COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "box_appuser_id"
             COGNITO_USER_POOL_ID: ''
-  CognitoBoxAppUsersMap: 
-    Type: "AWS::DynamoDB::Table"
-    Properties: 
-      TableName: "CognitoBoxAppUsersMap"
-      AttributeDefinitions: 
-        - 
-          AttributeName: "BoxAppUserId"
-          AttributeType: "S"
-        - 
-          AttributeName: "Username"
-          AttributeType: "S"
-      KeySchema: 
-        - 
-          AttributeName: "UserSubId"
-          KeyType: "HASH"
-        - 
-          AttributeName: "UserPoolId"
-          KeyType: "RANGE"
-      ProvisionedThroughput: 
-        ReadCapacityUnits: "5"
-        WriteCapacityUnits: "5"
 
   TokenExchangeApi:
     Type: AWS::Serverless::Api
@@ -82,11 +57,7 @@ Resources:
           BOX_PUBLIC_KEY_ID: ''
           BOX_PRIVATE_KEY_FILENAME: ''
           BOX_PRIVATE_KEY_PASSWORD: ''
-          DYNAMO_BOX_APP_USER_ID_KEY: 'BoxAppUserId'
-          DYNAMO_COGNITO_USERNAME_KEY: 'Username'
-          DYNAMO_PARTITION_KEY: 'UserSubId'
-          DYNAMO_SORT_KEY: 'UserPoolId'
-          DYNAMO_TABLE_NAME: 'CognitoBoxAppUsersMap',
+          COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "box_appuser_id"
           COGNITO_USER_POOL_ID: ''
 
 Outputs:

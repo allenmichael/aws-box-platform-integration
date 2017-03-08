@@ -14,10 +14,9 @@
  * limitations under the License.
 **/
 "use strict"
-var AWS = require('./aws-service');
-var getSubProp = require('./getSubProp');
-var checkDb = require('./checkDb');
-var generateUserToken = require('./generateUserToken');
+let AWS = require('./aws-service');
+let getAppUserProp = require('./getAppUserProp');
+let generateUserToken = require('./generateUserToken');
 exports.handler = function (event, context, callback) {
   try {
     var token = JSON.parse(event.body).token;
@@ -25,21 +24,16 @@ exports.handler = function (event, context, callback) {
     if (!token) {
       callback(null, { body: JSON.stringify({ "message": "No token found.", statusCode: '401' }) });
     }
-    
-    var cognitoidentityserviceprovider = AWS.getCognitoClient();
-    var dynamodb = AWS.getDynamoClient();
-    var foundSub;
-    var params = {
+
+    let cognitoidentityserviceprovider = AWS.getCognitoClient();
+    let params = {
       AccessToken: token
     };
     cognitoidentityserviceprovider.getUser(params).promise()
       .then(function (cognitoResponse) {
-        var sub = getSubProp(cognitoResponse.UserAttributes);
-        if (!sub) throw new Error("Error retrieving user information...");
-        return checkDb(dynamodb, sub);
-      })
-      .then(function (boxAppUserId) {
-        return generateUserToken(boxAppUserId, callback);
+        var boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
+        if (!boxAppUserId) throw new Error("Error retrieving user information...");
+        return generateUserToken(boxAppUserId);
       })
       .then(function (token) {
         callback(null, { statusCode: "200", body: JSON.stringify(token) });

@@ -1,9 +1,13 @@
 'use strict';
-let getSubProp = require('./getSubProp');
+let getAppUserProp = require('./getAppUserProp');
 module.exports = function (cognitoidentityserviceprovider, params) {
   return cognitoidentityserviceprovider.adminGetUser(params).promise()
     .then(function (cognitoResponse) {
-      var sub = getSubProp(cognitoResponse.UserAttributes);
-      return sub;
+      let boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
+      if (boxAppUserId === null) {
+        return true;
+      } else {
+        return false;
+      }
     });
 }

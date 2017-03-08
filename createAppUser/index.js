@@ -18,34 +18,29 @@
 let checkCognito = require('./checkCognito');
 let checkDb = require('./checkDb');
 let updateDb = require('./updateDb');
+let updateUserAttribute = require('./updateUserAttribute');
 let createAppUser = require('./createAppUser');
 let AWS = require('./aws-service');
 
 exports.handler = function (event, context) {
 
-  var cognitoidentityserviceprovider = AWS.getCognitoClient();
-  var dynamodb = AWS.getDynamoClient();
-  var foundSub;
-  var params = {
+  let cognitoidentityserviceprovider = AWS.getCognitoClient();
+  let params = {
     UserPoolId: event.userPoolId,
     Username: event.userName
   };
   checkCognito(cognitoidentityserviceprovider, params)
-    .then(function (sub) {
-      foundSub = sub;
-      return checkDb(dynamodb, sub, event.userPoolId);
-    })
-    .then(function (boxAppUserId) {
-      if (!boxAppUserId) {
+    .then(function (hasBoxAppUserId) {
+      if (hasBoxAppUserId) {
+        return;
+      } else {
         return createAppUser(event.userName)
           .then(function (appUser) {
-            return updateDb(dynamodb, foundSub, event.userPoolId, appUser.id, event.userName);
+            return updateUserAttribute(cognitoidentityserviceprovider, event.userPoolId, event.userName, appUser.id);
           });
-      } else {
-        return boxAppUserId;
       }
     })
-    .then(function (data) {
+    .then(function () {
       context.done(null, event);
     });
 }
