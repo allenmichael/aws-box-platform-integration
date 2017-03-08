@@ -16,8 +16,6 @@
 "use strict";
 
 let checkCognito = require('./checkCognito');
-let checkDb = require('./checkDb');
-let updateDb = require('./updateDb');
 let updateUserAttribute = require('./updateUserAttribute');
 let createAppUser = require('./createAppUser');
 let AWS = require('./aws-service');
