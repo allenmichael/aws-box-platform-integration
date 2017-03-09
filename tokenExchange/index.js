@@ -14,6 +14,8 @@
  * limitations under the License.
 **/
 "use strict"
+const Promise = require('bluebird');
+const asyncFunc = Promise.coroutine;
 let AWS = require('./aws-service');
 let getAppUserProp = require('./getAppUserProp');
 let generateUserToken = require('./generateUserToken');
@@ -24,23 +26,17 @@ exports.handler = function (event, context, callback) {
     if (!token) {
       callback(null, { body: JSON.stringify({ "message": "No token found.", statusCode: '401' }) });
     }
-
-    let cognitoidentityserviceprovider = AWS.getCognitoClient();
-    let params = {
-      AccessToken: token
-    };
-    cognitoidentityserviceprovider.getUser(params).promise()
-      .then(function (cognitoResponse) {
-        var boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
-        if (!boxAppUserId) throw new Error("Error retrieving user information...");
-        return generateUserToken(boxAppUserId);
-      })
-      .then(function (token) {
-        callback(null, { statusCode: "200", body: JSON.stringify(token) });
-      })
-      .catch(function (err) {
-        callback(null, { body: JSON.stringify({ "error": err.message }), statusCode: err.statusCode || "500" });
-      });
+    asyncFunc(function* () {
+      let cognitoidentityserviceprovider = AWS.getCognitoClient();
+      let params = {
+        AccessToken: token
+      };
+      let cognitoResponse = yield cognitoidentityserviceprovider.adminGetUser(params).promise();
+      var boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
+      if (!boxAppUserId) throw new Error("Error retrieving user information...");
+      let token = yield generateUserToken(boxAppUserId);
+      callback(null, { statusCode: "200", body: JSON.stringify(token) });
+    })();
   } catch (e) {
     callback(null, { body: JSON.stringify({ "error": e.message }), statusCode: "500" });
   }
