@@ -27,7 +27,7 @@ Resources:
             BOX_PUBLIC_KEY_ID: ''
             BOX_PRIVATE_KEY_FILENAME: ''
             BOX_PRIVATE_KEY_PASSWORD: ''
-            COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "box_appuser_id"
+            COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "custom:box_appuser_id"
             COGNITO_USER_POOL_ID: ''
 
   TokenExchangeApi:
@@ -74,7 +74,7 @@ Resources:
           BOX_PUBLIC_KEY_ID: ''
           BOX_PRIVATE_KEY_FILENAME: ''
           BOX_PRIVATE_KEY_PASSWORD: ''
-          COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "box_appuser_id"
+          COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY: "custom:box_appuser_id"
           COGNITO_USER_POOL_ID: ''
 
 Outputs:
