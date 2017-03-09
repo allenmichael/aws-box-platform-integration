@@ -28,7 +28,7 @@ Resources:
       DefinitionUri: s3://<bucket>/swagger.yaml
       StageName: Prod
       Variables:
-        LambdaFunctionName: !Ref LambdaFunction
+        LambdaFunctionName: !Ref TokenExchangeLambdaFunction
 
   TokenExchangeLambdaFunction:
     Type: AWS::Serverless::Function
@@ -41,13 +41,13 @@ Resources:
         ProxyApiRoot:
           Type: Api
           Properties:
-            RestApiId: !Ref ApiGatewayApi
+            RestApiId: !Ref TokenExchangeApi
             Path: /
             Method: ANY
         ProxyApiGreedy:
           Type: Api
           Properties:
-            RestApiId: !Ref ApiGatewayApi
+            RestApiId: !Ref TokenExchangeApi
             Path: /{proxy+}
             Method: ANY
       Environment:
@@ -67,7 +67,7 @@ Outputs:
     Value: !Join
       - ''
       - - https://
-        - !Ref ApiGatewayApi
+        - !Ref TokenExchangeApi
         - '.execute-api.'
         - !Ref 'AWS::Region'
         - '.amazonaws.com/Prod'

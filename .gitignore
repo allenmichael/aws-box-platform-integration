@@ -4,3 +4,6 @@ npm-debug.log
 config.js
 private_key.pem
 Archive.zip
+createAppUser.zip
+tokenExchange.zip
+box-cognito.yaml
