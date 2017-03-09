@@ -20,7 +20,7 @@ module.exports = function (userName) {
       is_platform_access_only: true
     }
   };
-  let BoxAdminClient = BoxSdk.getAppAuthClient(BoxConfig.enterprise, BoxConfig.enterpriseId);
+  let BoxAdminClient = BoxSdk.getAppAuthClient("enterprise", process.env.BOX_ENTERPRISE_ID);
   return new Promise(function (resolve, reject) {
     BoxAdminClient.post('/users', requestParams, BoxAdminClient.defaultResponseHandler(function (err, boxResponse) {
       if (err) { reject(err) }

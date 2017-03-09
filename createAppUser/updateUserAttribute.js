@@ -8,5 +8,7 @@ module.exports = function (cognitoidentityserviceprovider, userPoolId, userName,
         UserPoolId: userPoolId,
         Username: userName
     };
+    console.log("Updating user attributes...");
+    console.log(process.env.COGNITO_USER_ATTRIBUTE_BOX_APPUSER_ID_KEY);
     return cognitoidentityserviceprovider.adminUpdateUserAttributes(params).promise();
 }

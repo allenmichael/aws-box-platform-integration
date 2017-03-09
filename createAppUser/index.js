@@ -14,31 +14,33 @@
  * limitations under the License.
 **/
 "use strict";
-
-let checkCognito = require('./checkCognito');
+const Promise = require('bluebird');
+const asyncFunc = Promise.coroutine;
 let updateUserAttribute = require('./updateUserAttribute');
 let createAppUser = require('./createAppUser');
+let getAppUserProp = require('./getAppUserProp');
 let AWS = require('./aws-service');
 
 exports.handler = function (event, context) {
-
-  let cognitoidentityserviceprovider = AWS.getCognitoClient();
-  let params = {
-    UserPoolId: event.userPoolId,
-    Username: event.userName
-  };
-  checkCognito(cognitoidentityserviceprovider, params)
-    .then(function (hasBoxAppUserId) {
-      if (hasBoxAppUserId) {
-        return;
+  asyncFunc(function* () {
+    try {
+      let cognitoidentityserviceprovider = AWS.getCognitoClient();
+      let params = {
+        UserPoolId: event.userPoolId,
+        Username: event.userName
+      };
+      let cognitoResponse = yield cognitoidentityserviceprovider.adminGetUser(params).promise();
+      let boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
+      if (boxAppUserId !== null) {
+        context.done(null, event);
       } else {
-        return createAppUser(event.userName)
-          .then(function (appUser) {
-            return updateUserAttribute(cognitoidentityserviceprovider, event.userPoolId, event.userName, appUser.id);
-          });
+        let appUser = yield createAppUser(event.userName);
+        let updated = yield updateUserAttribute(cognitoidentityserviceprovider, event.userPoolId, event.userName, appUser.id);
+        context.done(null, event);
       }
-    })
-    .then(function () {
-      context.done(null, event);
-    });
+    } catch (e) {
+      context.done(e);
+    }
+  })();
 }
+
