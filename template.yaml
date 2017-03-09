@@ -10,15 +10,7 @@ Resources:
         Handler: index.handler
         Runtime: nodejs4.3
         CodeUri: s3://<bucket>/createAppUser.zip
-        Policies: 
-          -
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: "Allow"
-              Action:
-                - "cognito-idp:AdminGetUser"
-                - "cognito-idp:AdminUpdateUserAttributes"
+        Policies: AmazonCognitoDeveloperAuthenticatedIdentities
         Environment:
           Variables:
             BOX_CLIENT_ID: ''
@@ -44,15 +36,7 @@ Resources:
       CodeUri: s3://<bucket>/tokenExchange.zip
       Handler: index.handler
       Runtime: nodejs4.3
-      Policies: 
-          -
-          Version: "2012-10-17"
-          Statement:
-            -
-              Effect: "Allow"
-              Action:
-                - "cognito-idp:AdminGetUser"
-                - "cognito-idp:AdminUpdateUserAttributes"
+      Policies: AmazonCognitoDeveloperAuthenticatedIdentities
       Events:
         ProxyApiRoot:
           Type: Api
