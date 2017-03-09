@@ -20,24 +20,28 @@ let AWS = require('./aws-service');
 let getAppUserProp = require('./getAppUserProp');
 let generateUserToken = require('./generateUserToken');
 exports.handler = function (event, context, callback) {
-  try {
-    var token = JSON.parse(event.body).token;
-
-    if (!token) {
-      callback(null, { body: JSON.stringify({ "message": "No token found.", statusCode: '401' }) });
-    }
-    asyncFunc(function* () {
+  asyncFunc(function* () {
+    try {
+      let token = JSON.parse(event.body).token;
+      if (!token) {
+        callback(null, { body: JSON.stringify({ "message": "No token found.", statusCode: '401' }) });
+      }
       let cognitoidentityserviceprovider = AWS.getCognitoClient();
       let params = {
         AccessToken: token
       };
-      let cognitoResponse = yield cognitoidentityserviceprovider.getUser(params).promise();
-      var boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
+      let user = yield cognitoidentityserviceprovider.getUser(params).promise();
+      let userAttributesParams = {
+        UserPoolId: process.env.COGNITO_USER_POOL_ID,
+        Username: user.Username
+      }
+      let cognitoResponse = yield cognitoidentityserviceprovider.adminGetUser(userAttributesParams).promise();
+      let boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
       if (!boxAppUserId) throw new Error("Error retrieving user information...");
-      let token = yield generateUserToken(boxAppUserId);
-      callback(null, { statusCode: "200", body: JSON.stringify(token) });
-    })();
-  } catch (e) {
-    callback(null, { body: JSON.stringify({ "error": e.message }), statusCode: "500" });
-  }
+      let boxToken = yield generateUserToken(boxAppUserId);
+      callback(null, { statusCode: "200", body: JSON.stringify(boxToken) });
+    } catch (e) {
+      callback(null, { body: JSON.stringify({ "error": e.message }), statusCode: "500" });
+    }
+  })();
 }
