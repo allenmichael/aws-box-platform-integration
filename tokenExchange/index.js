@@ -31,7 +31,7 @@ exports.handler = function (event, context, callback) {
       let params = {
         AccessToken: token
       };
-      let cognitoResponse = yield cognitoidentityserviceprovider.adminGetUser(params).promise();
+      let cognitoResponse = yield cognitoidentityserviceprovider.getUser(params).promise();
       var boxAppUserId = getAppUserProp(cognitoResponse.UserAttributes);
       if (!boxAppUserId) throw new Error("Error retrieving user information...");
       let token = yield generateUserToken(boxAppUserId);
