@@ -10,7 +10,7 @@ Resources:
         Handler: index.handler
         Runtime: nodejs4.3
         CodeUri: s3://<bucket>/createAppUser.zip
-        Policies: AmazonCognitoDeveloperAuthenticatedIdentities
+        Policies: AmazonCognitoPowerUser
         Environment:
           Variables:
             BOX_CLIENT_ID: ''
@@ -36,7 +36,7 @@ Resources:
       CodeUri: s3://<bucket>/tokenExchange.zip
       Handler: index.handler
       Runtime: nodejs4.3
-      Policies: AmazonCognitoDeveloperAuthenticatedIdentities
+      Policies: AmazonCognitoPowerUser
       Events:
         ProxyApiRoot:
           Type: Api
