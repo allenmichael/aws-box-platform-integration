@@ -1,4 +1,5 @@
 'use strict';
+
 class AWSService {
     constructor() {
         this.AWS = require('aws-sdk');
