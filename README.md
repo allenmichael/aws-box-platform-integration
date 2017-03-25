@@ -97,7 +97,12 @@ Also it should support the newPasswordRequired operation to generate a new passw
 
 #### Step 11. Token exchange
 1. Once a token is generated from Cognito, the app client should call the API gateway end point that is used as a trigger for the "Token Exchange Lambda function".
-2. The Box token is sent as a successful response.
+2. The Box token is sent as a successful response. The request body looks as below.
+```
+{
+    "token" : "<cognito_token>"
+}
+```
 
 Support
 -------

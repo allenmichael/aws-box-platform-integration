@@ -1,9 +1,9 @@
 # box-node-webhook-to-lambda-sample
 
-This sample shows how to receive DynamoDB stream event that represents the FILE.UPLOADED event from Box.
-Each time an event occurs, using the file_id in the event the content of the image file is read from Box.
-That content is given as input to the AWS Rekognition service. The Rekognition service will generate labels with confidence percentage. 
-The labels and values are stored as metadata of the image file in Box.
+This sample shows how to create an app user in Box based on the user id from Cognito.
+When the user first time logs in to Cognito, a corresponding app user is created in Box.
+Once the user is created in Box, the custom attribute box_appuser_id is created in the Cognito user object.
+The subsequent login from Box will detect the box_appuser_id in the Cognito user object and does nothing.
 
 This sample gives step-by-step instructions for creating the Lambda function.
 
