@@ -55,11 +55,49 @@ This sample gives the step-by-step instructions.
 4. Enter your "Client ID" from the developer console in the "API Key" field
     * Your application is now authorized to access your Box account
 
-#### Step 4. Create a Lambda function that create the App user in Box, when the user logs in for the first time. The subsequent logins does not do any operations in Box.
+#### Step 4. Create Cognito user pool
+1. Log into the [AWS Management Console](https://aws.amazon.com/console) and go to the Cognito console.
+2. Press "Manage you User Pools"
+3. Press "Create user pool"
+4. Fill pool name as "box-cognito-integration". Press the "Step through settings"
+5. Press "Add a custom attribute"
+6. Choose the String type. Give the attribute name as "box_appuser_id". Press "Next step".
+7. Configure next steps based on the application needs.
+8. Finally press "Create pool".
+
+#### Step 5. Create a Lambda function that create the App user in Box, when the user logs in for the first time. The subsequent logins does not do any operations in Box.
 See [Create App User Lambda function](https://github.com/box/samples/tree/cognito_integration/box-node-cognito-lambdas-sample/createAppUser) for more info.
 
-#### Step 5. Create a Lambda function that generates Box app user token for the given Cognito JWT access token.
+#### Step 6. Create a Lambda function that generates Box app user token for the given Cognito JWT access token.
 See [Token Exchange Lambda function](https://github.com/box/samples/tree/cognito_integration/box-node-cognito-lambdas-sample/tokenExchange) for more info.
+
+#### Step 7. Register an App to access the pool
+1. Log into the [AWS Management Console](https://aws.amazon.com/console) and go to the Cognito console.
+2. Press "Manage you User Pools". Press the user pools you have created. Here the name of the pool is "box-cognito-integration".
+3. Press the "App". Then, press "Add an app".
+4. Give the app name and fill other configuration details based on the need.
+5. Press "Create app". The app is created. 
+6. Press "Save changes".
+
+#### Step 8. Develop an app client
+The app client should handle the login to Cognito.
+Also it should support the newPasswordRequired operation to generate a new password for the first time login based on the configuration.
+
+#### Step 9. Cognito admin user creates a user
+1. Log into the [AWS Management Console](https://aws.amazon.com/console) and go to the Cognito console.
+2. Press "Manage you User Pools". Press the user pools you have created. Here the name of the pool is "box-cognito-integration".
+3. Press "Users and groups".
+4. Press "Create user". Fille the details and press "Create user" button in the pop-up.
+5. The user created successfully. The status of the user is "Enabled".
+
+#### Step 10. Login as user
+1. Login as the user that is created in the previous step. Change password if it asks for it.
+2. It triggers the "Create App User Lambda Function". That creates the user in Box.
+3. Verify in Box that the user is created successfully in the enterprise.
+
+#### Step 11. Token exchange
+1. Once a token is generated from Cognito, the app client should call the API gateway end point that is used as a trigger for the "Token Exchange Lambda function".
+2. The Box token is sent as a successful response.
 
 Support
 -------
