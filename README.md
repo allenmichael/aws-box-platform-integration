@@ -17,11 +17,11 @@ This sample gives the step-by-step instructions.
         * *You can also pick "Enterprise Integration" if your app will interact with existing Box enterprises*
     * Select "Server Authentication" and press "Next"
         * *This sample demonstrates a server-to-server integration*
-    * Name the application "Box Node Lambda Sample - YOUR NAME"
+    * Name the application "Box Node Cognito integration Sample - YOUR NAME"
         * *Application names must be unique across Box*
     * Press "Create App" and then "View Your App"
     * Select "Application Access" as "Enterprise".
-    * Check the Application scopes "Manage users", "Manage enterprise properties",
+    * Check the Application scopes "Manage users" and "Manage enterprise properties".
     * Enable both Advanced Features "Perform Actions as Users" and "Generate User Access Tokens".
     * Press "Save Changes"
         * *You'll need your "Client ID" and "Client Secret" later*
@@ -47,7 +47,7 @@ This sample gives the step-by-step instructions.
 
 #### Step 3. Authorize the application into your Box account
 1. In a new tab, log into your Box developer account as an admin and go to the Admin Console
-    * Applications that use Server Authentication must be authorized by the admin of the account*
+    * Applications that use Server Authentication must be authorized by the admin of the account
 2. Under the gear icon, go to Enterprise Settings (or Business Settings, depending on your account type)
     * You'll need the "Enterprise ID" of your account later
 3. Go to the Apps tab
